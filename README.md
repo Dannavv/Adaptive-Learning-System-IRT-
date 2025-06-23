@@ -79,6 +79,8 @@ This project is an adaptive testing platform for Math proficiency, powered by It
 
 This project is for educational and research purposes.
 
+## Credit
+- **Question Bank Source:** The questions in `frontend/questions.csv` are adapted from [TAL-SCQ5K](https://github.com/math-eval/TAL-SCQ5K/tree/main).
 ---
 
 *For questions or contributions, please open an issue or
