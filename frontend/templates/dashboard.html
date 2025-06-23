@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>English Adaptive Test Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
+    <!-- Chart.js CDN for demonstration -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #22577a;
+            --accent: #38a3a5;
+            --bg: #f7fafd;
+            --glass: rgba(255, 255, 255, 0.92);
+            --border: rgba(56, 163, 165, 0.18);
+            --stat-bg: #e8f6ef;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(120deg, #e0eafc 0%, #b6e2d3 100%);
+            font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .dashboard-card {
+            background: var(--glass);
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(34, 87, 122, 0.10);
+            border: 1.5px solid var(--border);
+            backdrop-filter: blur(8px);
+            width: 98vw;
+            max-width: 800px;
+            padding: 28px 24px 22px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        .dashboard-title {
+            font-size: 1.45rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 18px;
+            letter-spacing: 0.5px;
+        }
+
+        .user-greeting {
+            display: block;
+            font-size: 1.05rem;
+            font-weight: 400;
+            margin-top: 5px;
+            color: var(--accent);
+            letter-spacing: 0.2px;
+        }
+
+        .graph-section {
+            width: 100%;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 1px 4px rgba(56, 163, 165, 0.07);
+            padding: 18px 10px;
+            margin-bottom: 26px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stats-grid {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--stat-bg);
+            border-radius: 10px;
+            padding: 18px 8px 14px 8px;
+            text-align: center;
+            box-shadow: 0 1px 4px rgba(56, 163, 165, 0.06);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .continue-btn {
+            background: linear-gradient(90deg, #38a3a5, #57cc99);
+            color: #fff;
+            font-weight: 700;
+            border: none;
+            padding: 14px 48px;
+            border-radius: 30px;
+            font-size: 1.08rem;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(56, 163, 165, 0.10);
+            transition: background 0.18s, transform 0.18s;
+            margin-top: 6px;
+        }
+
+        .continue-btn:hover {
+            background: linear-gradient(90deg, #57cc99, #38a3a5);
+            transform: translateY(-2px) scale(1.03);
+        }
+
+        @media (max-width: 700px) {
+            .dashboard-card {
+                padding: 16px 2vw 14px 2vw;
+            }
+
+            .graph-section {
+                padding: 10px 2px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dashboard-card {
+                padding: 8px 1vw 8px 1vw;
+            }
+
+            .dashboard-title {
+                font-size: 1.05rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .stat-card {
+                padding: 10px 2px 8px 2px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-card">
+        <div
+            style="display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 18px;">
+            <div style="flex: 1; display: flex; justify-content: center; position: relative;">
+                <div class="dashboard-title"
+                    style="margin-bottom: 0; font-size: 1.4rem; font-weight: 600; position: relative;">
+                    Test Progress Dashboard
+                    <span id="user-greeting" class="user-greeting"
+                        style="margin-left: 12px; font-size: 1rem; color: #555;">
+                        Welcome {{user.name}}!
+                    </span>
+
+                    <!-- Logout button floating to right within the same title bar -->
+                    <form method="post" action="/logout"
+                        style="position: absolute; right: -100px; top: 50%; transform: translateY(-50%); margin: 0;">
+                        <button type="submit" class="continue-btn" title="Delete Session"
+                            style="background: none; border: none; padding: 4px; cursor: pointer;">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="22" width="22" fill="#e63946"
+                                viewBox="0 0 24 24">
+                                <path
+                                    d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="graph-section">
+            <canvas id="progressChart" width="600" height="300"></canvas>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Attempted</div>
+                <div class="stat-value" id="stat-attempted">{{user.items_administered}}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Not Solved</div>
+                <div class="stat-value" id="stat-notsolved">{{user.total_items - user.items_administered}}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total</div>
+                <div class="stat-value" id="stat-remaining">{{user.total_items}}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Current θ</div>
+                <div class="stat-value" id="stat-current-theta">{{ "%.4f"|format(user.current_theta) }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Best θ</div>
+                <div class="stat-value" id="stat-best-theta">{{ "%.4f"|format(user.max_theta) }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Worst θ</div>
+                <div class="stat-value" id="stat-worst-theta">{{ "%.4f"|format(user.min_theta) }}</div>
+            </div>
+
+        </div>
+        <form method="post" action="/test"
+            style="margin-top: 18px; width: 100%; max-width: 600px; display: flex; flex-direction: row; align-items: center; gap: 12px; background: var(--glass); padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px;">
+
+            <label for="num-questions"
+                style="font-size: 1rem; color: var(--primary); font-weight: 500; white-space: nowrap;">
+                Number of Questions:
+                <span id="num-questions-value"
+                    style="color: var(--accent); font-weight: 700; margin-left: 6px;">20</span>
+            </label>
+
+            <input type="range" id="num-questions" name="num_questions" min="10" max="50" value="20"
+                oninput="document.getElementById('num-questions-value').textContent = this.value"
+                style="flex: 1; accent-color: var(--accent);">
+
+            <button type="submit"
+                style="background-color: var(--accent); color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer;">
+                Continue
+            </button>
+        </form>
+
+    </div>
+
+    <script>
+        const thetaHistory = {{ user.theta_history | tojson }};
+        const labels = thetaHistory.map((_, i) => 'S' + (i + 1));
+
+        const ctx = document.getElementById('progressChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'θ Progress',
+                    data: thetaHistory,
+                    borderColor: '#38a3a5',
+                    backgroundColor: 'rgba(56,163,165,0.08)',
+                    tension: 0.3,
+                    pointRadius: 3,
+                    pointBackgroundColor: '#38a3a5',
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: false,
+                plugins: {
+                    legend: { display: true }
+                },
+                scales: {
+                    x: {
+                        grid: { display: true }
+                    },
+                    y: {
+                        min: -6.5,
+                        max: 6.5,
+                        ticks: { stepSize: 0.1 }
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+
+</html>

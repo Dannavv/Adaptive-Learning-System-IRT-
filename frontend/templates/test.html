@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test</title>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                packages: ['base', 'ams', 'color']  // Enables \uline and similar
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --primary: #22577a;
+            --accent: #38a3a5;
+            --bg: #f7fafd;
+            --glass: rgba(255, 255, 255, 0.92);
+            --border: rgba(56, 163, 165, 0.18);
+            --option-bg: #e8f6ef;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(120deg, #e0eafc 0%, #b6e2d3 100%);
+            font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .glass-card {
+            margin: 32px 0;
+            background: var(--glass);
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(34, 87, 122, 0.10);
+            border: 1.5px solid var(--border);
+            backdrop-filter: blur(8px);
+            width: 98vw;
+            max-width: 820px;
+            padding: 28px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            box-sizing: border-box;
+        }
+
+        .question-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 1px 4px rgba(56, 163, 165, 0.07);
+            padding: 22px 18px 16px 18px;
+            margin-bottom: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .question-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .q-number {
+            font-weight: 700;
+            color: var(--accent);
+            font-size: 1.1rem;
+        }
+
+        .q-meta {
+            font-size: 0.98rem;
+            color: #22577a;
+            display: flex;
+            gap: 16px;
+        }
+
+        .q-meta span {
+            background: var(--option-bg);
+            border-radius: 8px;
+            padding: 2px 10px;
+            font-size: 0.95rem;
+            color: var(--primary);
+        }
+
+        .q-problem {
+            font-size: 1.08rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin: 6px 0;
+        }
+
+        .answer-options {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .answer-option {
+            background: var(--option-bg);
+            border-radius: 7px;
+            padding: 8px 12px;
+            font-size: 1rem;
+            color: #22577a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .correct-ans {
+            margin-top: 6px;
+            font-size: 0.99rem;
+            color: #fff;
+            background: var(--accent);
+            border-radius: 6px;
+            padding: 4px 12px;
+            display: inline-block;
+            font-weight: 600;
+        }
+
+        @media (max-width: 600px) {
+            .glass-card {
+                padding: 10px 2vw;
+            }
+
+            .question-card {
+                padding: 10px 6px 8px 6px;
+            }
+
+            .q-meta {
+                flex-direction: column;
+                gap: 4px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div style="display: flex; gap: 10px;">
+
+        <form id="quiz-form" action="/result" method="POST">
+            <input type="hidden" name="results" id="result-input" value="" />
+            <input type="hidden" name="alltrue" id="result-input" value="" />
+            
+            <button type="submit" style="
+        margin: 24px auto 0 auto;
+        display: block;
+        padding: 10px 26px;
+        font-size: 1.1rem;
+        background: #22577a;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-family: inherit;
+        font-weight: 700;
+        letter-spacing: 1px;
+        transition: background 0.2s;
+        ">All True (for testing)</button>
+        </form>
+        
+        <form id="quiz-form" action="/result" method="POST">
+            <input type="hidden" name="results" id="result-input" value="" />
+             <input type="hidden" name="allfalse" id="result-input" value="" />
+            
+            <button type="submit" style="
+        margin: 24px auto 0 auto;
+        display: block;
+        padding: 10px 26px;
+        font-size: 1.1rem;
+        background: #22577a;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-family: inherit;
+        font-weight: 700;
+        letter-spacing: 1px;
+        transition: background 0.2s;
+        ">All false for testing</button>
+        </form>
+    </div>
+        
+        <div class="glass-card">
+        {% for q in questions %}
+        <div class="question-card" data-qidx="{{ loop.index0 }}">
+            <div class="question-header">
+                <div class="q-number">Question {{ loop.index }}</div>
+                <div class="q-meta">
+                    <span>Difficulty: {{ q.difficulty }}</span>
+                    <span>Tag: {{ q.tag }}</span>
+                </div>
+            </div>
+            <div class="q-problem">{{ q.problem|safe }}</div>
+            <ul class="answer-options">
+                {% for ans in q.answer_option_list %}
+                {% for a in ans %}
+                <li class="answer-option" data-value="{{ a.aoVal }}"
+                    onclick="checkAnswer(this, '{{ q.answer_value }}')">
+                    <span>{{ a.aoVal }}.</span> {{ a.content|safe }}
+                </li>
+                {% endfor %}
+                {% endfor %}
+            </ul>
+            <div class="feedback" style="display:none;"></div>
+            <div class="correct-ans">
+                Correct Answer: {{ q.answer_value }}
+            </div>
+        </div>
+        {% endfor %}
+
+        <form id="quiz-form" action="/result" method="POST">
+            <input type="hidden" name="results" id="result-input" value="" />
+
+            <button type="submit" style="
+        margin: 24px auto 0 auto;
+        display: block;
+        padding: 10px 26px;
+        font-size: 1.1rem;
+        background: #22577a;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-family: inherit;
+        font-weight: 700;
+        letter-spacing: 1px;
+        transition: background 0.2s;
+    ">Submit</button>
+        </form>
+
+
+    </div>
+    <style>
+        .answer-option {
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .answer-option.correct {
+            background: #38a3a5 !important;
+            color: #fff !important;
+        }
+
+        .answer-option.incorrect {
+            background: #e57373 !important;
+            color: #fff !important;
+        }
+
+        .answer-option.disabled {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .correct-ans {
+            margin-top: 6px;
+            font-size: 0.99rem;
+            color: #fff;
+            background: #38a3a5;
+            border-radius: 6px;
+            padding: 4px 12px;
+            display: inline-block;
+            font-weight: 600;
+        }
+
+        #submit-btn:hover {
+            background: #18344a;
+        }
+    </style>
+    <script>
+        // console.log("Length of questions: ", {{ questions|length }});
+        // Initialize resultsList with nulls, one for each question
+        // var resultsList = Array.from(document.querySelectorAll('.question-card')).map(() => 0);
+        var resultsList = new Array({{ questions|length }}).fill(1);
+
+        document.getElementById("quiz-form").addEventListener("submit", function (e) {
+                document.getElementById("result-input").value = JSON.stringify(resultsList);
+            });
+
+        function checkAnswer(optionElem, correctValue) {
+            var questionCard = optionElem.closest('.question-card');
+            var qidx = parseInt(questionCard.getAttribute('data-qidx'), 10);
+            var ul = optionElem.parentNode;
+            if (ul.classList.contains('answered')) return;
+
+            var selectedValue = optionElem.getAttribute('data-value');
+            var isCorrect = selectedValue === correctValue;
+
+            var feedbackDiv = ul.parentNode.querySelector('.feedback');
+            ul.classList.add('answered');
+
+            // Mark all options as disabled
+            Array.from(ul.children).forEach(li => {
+                li.classList.add('disabled');
+            });
+
+            // Highlight the selected option
+            if (isCorrect) {
+                optionElem.classList.add('correct');
+                feedbackDiv.textContent = 'Right!';
+                feedbackDiv.style.background = '#38a3a5';
+                resultsList[qidx] = 1;
+            } else {
+                optionElem.classList.add('incorrect');
+                feedbackDiv.textContent = 'Wrong!';
+                feedbackDiv.style.background = '#e57373';
+                resultsList[qidx] = 0;
+            }
+
+            // Always highlight the correct answer for testing
+            Array.from(ul.children).forEach(li => {
+                if (li.getAttribute('data-value') === correctValue) {
+                    li.classList.add('correct');
+                }
+            });
+
+            feedbackDiv.style.display = 'block';
+            feedbackDiv.style.color = '#fff';
+            feedbackDiv.style.borderRadius = '6px';
+            feedbackDiv.style.padding = '4px 12px';
+            feedbackDiv.style.marginTop = '8px';
+            feedbackDiv.style.fontWeight = 'bold';
+        }
+
+        
+    </script>
+    <!-- MathJax configuration and script -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</body>
+
+</html>
